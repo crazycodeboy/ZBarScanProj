@@ -49,9 +49,12 @@ public class CaptureActivity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		findViewById();
 		addEvents();
-		initViews();
 	}
-
+	@Override
+	protected void onResume() {
+		initViews();
+		super.onResume();
+	}
 	private void findViewById() {
 		scanPreview = (FrameLayout) findViewById(R.id.capture_preview);
 		scanResult = (TextView) findViewById(R.id.capture_scan_result);
@@ -105,7 +108,10 @@ public class CaptureActivity extends Activity {
 	private void releaseCamera() {
 		if (mCamera != null) {
 			previewing = false;
+			mCamera.cancelAutoFocus();
 			mCamera.setPreviewCallback(null);
+			mPreview.getHolder().removeCallback(mPreview);//Removes a previously added Callback interface from this holder.
+			mCamera.stopPreview();
 			mCamera.release();
 			mCamera = null;
 		}
